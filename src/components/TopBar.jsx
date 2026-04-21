@@ -1,3 +1,4 @@
+import React from 'react'
 import { Terminal, Github, ExternalLink, Cpu, Layers, GitBranch } from 'lucide-react'
 import { detectProvider, providerLabel, providerColor } from '../lib/claudeClient.js'
 

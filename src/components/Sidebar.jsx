@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { Cpu, Activity, Code2, Timer, Bug, Package, Zap, Eye, EyeOff, ExternalLink } from 'lucide-react'
 import { detectProvider, providerLabel, providerColor } from '../lib/claudeClient.js'
 
