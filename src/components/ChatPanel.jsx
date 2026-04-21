@@ -98,7 +98,7 @@ export default function ChatPanel({ tool, apiKey, inputText, onInputChange }) {
   const bottomRef  = useRef(null)
   const textareaRef = useRef(null)
 
-  useEffect(() => { setHistory([]); setInput('') }, [tool?.id])
+  useEffect(() => { setHistory([]); onInputChange('') }, [tool?.id])
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [history, loading])
 
   const send = async () => {
