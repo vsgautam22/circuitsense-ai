@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Send, Loader2, Trash2, Copy, CheckCheck, Cpu, Activity, Code2, Timer, Bug, Package } from 'lucide-react'
 import { callClaude, detectProvider, providerLabel, providerColor } from '../lib/claudeClient.js'
+import { saveToHistory } from './HistoryPanel.jsx'
 import OutputRenderer from './OutputRenderer.jsx'
 
 const iconMap = { Cpu, Activity, Code2, Timer, Bug, Package }
@@ -90,7 +91,7 @@ function EmptyState({ tool }) {
   )
 }
 
-export default function ChatPanel({ tool, apiKey, inputText, onInputChange }) {
+export default function ChatPanel({ tool, apiKey, inputText, onInputChange, onNewHistoryEntry }) {
 
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
@@ -114,6 +115,7 @@ export default function ChatPanel({ tool, apiKey, inputText, onInputChange }) {
     try {
       const result = await callClaude(apiKey, tool.systemPrompt, userMsg)
       setHistory(h => [...h, { role: 'assistant', content: result }])
+      if (onNewHistoryEntry) onNewHistoryEntry({ prompt: userMsg, response: result, timestamp: Date.now() })
     } catch (e) {
       setHistory(h => [...h, { role: 'error', content: `Error: ${e.message}` }])
     }

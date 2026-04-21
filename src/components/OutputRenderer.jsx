@@ -54,7 +54,40 @@ function renderContent(content, accent) {
 
 function TextBlock({ text, accent }) {
   if (!text.trim()) return null
-  // Detect simple markdown table
+
+  // Detect ASCII diagram/schematic block (contains box-drawing chars, circuit symbols, or indented art)
+  const looksLikeDiagram = (
+    (text.includes('──') || text.includes('│') || text.includes('┌') || text.includes('└')) ||
+    (text.includes('|') && text.includes('+') && text.split('\n').filter(l => l.includes('|') || l.includes('-')).length >= 3) ||
+    (text.includes('\/\/\/') || text.includes('-[') || text.includes(']--') || text.includes('--+--')) ||
+    (text.includes('‾') && text.includes('_') && text.includes('|'))
+  )
+
+  if (looksLikeDiagram) {
+    return (
+      <div
+        className="my-2 rounded overflow-hidden"
+        style={{ border: `1px solid ${accent || '#00ff88'}25`, background: 'rgba(0,0,0,0.5)' }}
+      >
+        <div
+          className="flex items-center gap-2 px-3 py-1.5"
+          style={{ background: `${accent || '#00ff88'}08`, borderBottom: `1px solid ${accent || '#00ff88'}15` }}
+        >
+          <span className="font-mono text-[9px] font-bold tracking-widest" style={{ color: accent || '#00ff88' }}>
+            DIAGRAM
+          </span>
+        </div>
+        <pre
+          className="p-4 m-0 overflow-x-auto font-mono text-[11px] leading-relaxed"
+          style={{ color: accent || '#00ff88', background: 'transparent', border: 'none', whiteSpace: 'pre' }}
+        >
+          {text.trim()}
+        </pre>
+      </div>
+    )
+  }
+
+  // Detect markdown table
   if (text.includes('|') && text.includes('\n')) {
     const lines = text.split('\n').filter(l => l.trim())
     const tableLines = lines.filter(l => l.trim().startsWith('|'))
@@ -62,12 +95,15 @@ function TextBlock({ text, accent }) {
       return <TableBlock rows={tableLines} accent={accent} />
     }
   }
+
   return (
     <p className="font-mono text-[12px] text-scope-dim leading-relaxed whitespace-pre-wrap">
       {text}
     </p>
   )
 }
+
+
 
 function CodeBlock({ lang, code, accent }) {
   const [copied, setCopied] = React.useState(false)

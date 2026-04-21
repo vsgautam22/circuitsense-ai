@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronRight, ChevronLeft, Plus, Pencil, Trash2, Check, X, BookOpen } from 'lucide-react'
 
-const MAX_EXAMPLES = 10
+const MAX_EXAMPLES = 25
 const STORAGE_KEY = (toolId) => `cs_examples_${toolId}`
 
 function loadExamples(toolId, defaults = []) {
@@ -202,7 +202,7 @@ export default function ExamplesPanel({ tool, onSelect }) {
           </div>
 
           {/* Example list */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          <div className="flex-1 overflow-y-auto thin-scroll p-3 space-y-2">
             {examples.length === 0 && !adding && (
               <div className="text-center py-8 space-y-2">
                 <p className="font-mono text-[10px] text-scope-muted">No examples yet.</p>
