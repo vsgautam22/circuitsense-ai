@@ -26,7 +26,7 @@ export default function Sidebar({ tools, activeTool, onSelectTool, apiKey, onApi
   const pType = detectProvider(apiKey)
   const pName = providerLabel(apiKey)
   const pColor = providerColor(apiKey)
-  const keyValid = pType !== 'unknown' && apiKey.length > 8
+  const keyValid = pType !== 'unknown' && (apiKey || '').length > 8
 
   return (
     <aside className="w-64 flex-shrink-0 flex flex-col h-screen glass glass-border relative z-10">
@@ -140,7 +140,7 @@ export default function Sidebar({ tools, activeTool, onSelectTool, apiKey, onApi
                 {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
               </button>
             </div>
-            {localKey.length > 8 && (
+            {localKey?.length > 8 && (
               <button
                 onClick={handleSave}
                 className="w-full font-mono text-[11px] py-1.5 rounded transition-all text-scope-green border border-scope-green/30"
@@ -162,7 +162,7 @@ export default function Sidebar({ tools, activeTool, onSelectTool, apiKey, onApi
           >
             <div className="w-1.5 h-1.5 rounded-full bg-scope-green pulse-dot" />
             <span className="font-mono text-[11px] text-scope-dim flex-1 truncate">
-              {apiKey.slice(0, 8)}••••••••
+              {(apiKey || '').slice(0, 8)}••••••••
             </span>
             <span className="font-mono text-[10px] text-scope-dim hover:text-scope-text">edit</span>
           </div>

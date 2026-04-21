@@ -102,7 +102,7 @@ export default function ChatPanel({ tool, apiKey, inputText, onInputChange }) {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [history, loading])
 
   const send = async () => {
-    if (!input.trim() || loading) return
+    if (!inputText?.trim() || loading) return
     if (!apiKey || apiKey.length < 8) {
       setHistory(h => [...h, { role: 'error', content: 'Enter a valid API key in the sidebar.' }])
       return
