@@ -165,7 +165,7 @@ function SchematicTips({ accent }) {
 }
 
 // ── Main Panel ────────────────────────────────────────────────────────────────
-export default function SchematicPanel({ tool, apiKey, onNewHistoryEntry }) {
+export default function SchematicPanel({ tool, apiKey, onNewHistoryEntry, externalInput, externalTrigger }) {
   const accent = tool?.accent || '#00e676'
 
   // Tabs: 'nl' = Natural Language, 'hdl' = HDL Code
@@ -190,6 +190,16 @@ export default function SchematicPanel({ tool, apiKey, onNewHistoryEntry }) {
   useEffect(() => {
     nlBottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [nlHistory, nlLoading])
+
+  // Wire external input (from Examples/History panels) into the active input field
+  useEffect(() => {
+    if (!externalInput || externalTrigger === 0) return
+    if (mode === 'hdl') {
+      setHdlCode(externalInput)
+    } else {
+      setNlInput(externalInput)
+    }
+  }, [externalTrigger])
 
   useEffect(() => {
     hdlBottomRef.current?.scrollIntoView({ behavior: 'smooth' })

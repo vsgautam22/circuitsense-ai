@@ -105,7 +105,7 @@ async function callOpenAICompat(apiKey, systemPrompt, userMessage, baseUrl, mode
   const res = await fetch(`${baseUrl}/v1/chat/completions`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ model, messages, max_tokens: 2048 }),
+    body: JSON.stringify({ model, messages, max_tokens: 8192 }),
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
@@ -134,7 +134,7 @@ export async function callClaude(apiKey, systemPrompt, userMessage) {
       return callOpenAICompat(apiKey, systemPrompt, userMessage, 'https://api.openai.com', 'gpt-4o-mini')
 
     case 'groq':
-      return callOpenAICompat(apiKey, systemPrompt, userMessage, 'https://api.groq.com/openai', 'llama-3.1-8b-instant')
+      return callOpenAICompat(apiKey, systemPrompt, userMessage, 'https://api.groq.com/openai', 'llama-3.3-70b-versatile')
 
     case 'openrouter':
       return callOpenAICompat(apiKey, systemPrompt, userMessage, 'https://openrouter.ai/api', 'meta-llama/llama-3.1-8b-instruct:free')

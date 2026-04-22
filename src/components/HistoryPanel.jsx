@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { History, ChevronDown, ChevronUp, Trash2, RotateCcw, Clock } from 'lucide-react'
+import { History, Trash2, RotateCcw, Clock } from 'lucide-react'
 
 const MAX_HISTORY = 50
 const STORAGE_KEY = (toolId) => `cs_history_${toolId}`
@@ -26,7 +26,7 @@ function HistoryItem({ item, index, accent, onReuse, onDelete }) {
   const [expanded, setExpanded] = useState(false)
   const timeStr = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   const dateStr = new Date(item.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' })
-  const shortPrompt = item.prompt.length > 60 ? item.prompt.slice(0, 60) + '…' : item.prompt
+  const shortPrompt = item.prompt.length > 55 ? item.prompt.slice(0, 55) + '…' : item.prompt
 
   return (
     <div
@@ -38,24 +38,24 @@ function HistoryItem({ item, index, accent, onReuse, onDelete }) {
     >
       <div className="flex items-start gap-2 px-3 py-2">
         <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setExpanded(v => !v)}>
-          <div className="flex items-center gap-1.5 mb-1">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <Clock size={8} style={{ color: accent, opacity: 0.7 }} />
             <span className="font-mono text-[8px] text-scope-muted">{dateStr} {timeStr}</span>
           </div>
           <p className="font-mono text-[10px] text-scope-dim leading-snug">{shortPrompt}</p>
         </div>
-        <div className="flex gap-1 flex-shrink-0">
+        <div className="flex gap-1 flex-shrink-0 mt-0.5">
           <button
             onClick={() => onReuse(item.prompt)}
-            className="w-5 h-5 rounded flex items-center justify-center transition-colors hover:opacity-80"
+            className="w-5 h-5 rounded flex items-center justify-center"
             style={{ background: `${accent}15`, color: accent }}
-            title="Reuse prompt"
+            title="Reuse"
           >
             <RotateCcw size={8} />
           </button>
           <button
             onClick={() => onDelete(index)}
-            className="w-5 h-5 rounded flex items-center justify-center transition-colors"
+            className="w-5 h-5 rounded flex items-center justify-center"
             style={{ background: 'rgba(255,69,96,0.08)', color: '#ff4560' }}
             title="Delete"
           >
@@ -64,12 +64,9 @@ function HistoryItem({ item, index, accent, onReuse, onDelete }) {
         </div>
       </div>
       {expanded && item.response && (
-        <div
-          className="px-3 pb-2 border-t"
-          style={{ borderColor: `${accent}15` }}
-        >
-          <p className="font-mono text-[9px] text-scope-muted leading-relaxed mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap">
-            {item.response.slice(0, 400)}{item.response.length > 400 ? '…' : ''}
+        <div className="px-3 pb-2 border-t" style={{ borderColor: `${accent}15` }}>
+          <p className="font-mono text-[9px] text-scope-muted leading-relaxed mt-2 max-h-28 overflow-y-auto whitespace-pre-wrap">
+            {item.response.slice(0, 350)}{item.response.length > 350 ? '…' : ''}
           </p>
         </div>
       )}
@@ -92,7 +89,7 @@ export default function HistoryPanel({ tool, onReuse, newEntry }) {
     }
   }, [newEntry])
 
-  const handleDelete = (idx) => {
+  const handleDelete = idx => {
     const updated = history.filter((_, i) => i !== idx)
     setHistory(updated)
     if (tool) localStorage.setItem(STORAGE_KEY(tool.id), JSON.stringify(updated))
@@ -118,56 +115,45 @@ export default function HistoryPanel({ tool, onReuse, newEntry }) {
           <span className="font-mono text-[10px] font-bold tracking-wider uppercase" style={{ color: accent }}>
             History
           </span>
-          <span
-            className="font-mono text-[9px] px-1.5 py-0.5 rounded"
-            style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}25` }}
-          >
+          <span className="font-mono text-[9px] px-1.5 py-0.5 rounded"
+            style={{ background: `${accent}15`, color: accent, border: `1px solid ${accent}25` }}>
             {history.length}
           </span>
         </div>
         {history.length > 0 && (
           showClearConfirm ? (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <span className="font-mono text-[8px] text-scope-muted">Clear all?</span>
-              <button onClick={handleClearAll} className="font-mono text-[8px] text-scope-red hover:opacity-80">Yes</button>
-              <button onClick={() => setShowClearConfirm(false)} className="font-mono text-[8px] text-scope-dim hover:text-scope-text ml-1">No</button>
+              <button onClick={handleClearAll} className="font-mono text-[8px] text-scope-red">Yes</button>
+              <button onClick={() => setShowClearConfirm(false)} className="font-mono text-[8px] text-scope-dim ml-1">No</button>
             </div>
           ) : (
-            <button
-              onClick={() => setShowClearConfirm(true)}
-              className="font-mono text-[9px] text-scope-muted hover:text-scope-red transition-colors"
-            >
+            <button onClick={() => setShowClearConfirm(true)}
+              className="font-mono text-[9px] text-scope-muted hover:text-scope-red transition-colors">
               clear
             </button>
           )
         )}
       </div>
 
-      {/* List */}
-      <div 
-        className="flex-1 p-2.5 space-y-1.5 history-scroll"
-        style={{ 
-          overflowY: 'scroll',
+      {/* Scrollable list */}
+      <div
+        className="flex-1 p-2.5 space-y-1.5"
+        style={{
+          overflowY: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(0,255,136,0.3) transparent'
+          scrollbarColor: `${accent}40 transparent`,
         }}
       >
         {history.length === 0 ? (
-          <div className="text-center py-6">
-            <History size={16} className="mx-auto mb-2 opacity-20" style={{ color: accent }} />
+          <div className="text-center py-5">
+            <History size={16} className="mx-auto mb-1.5 opacity-20" style={{ color: accent }} />
             <p className="font-mono text-[9px] text-scope-muted">No history yet</p>
             <p className="font-mono text-[8px] text-scope-muted opacity-60 mt-0.5">Queries appear here</p>
           </div>
         ) : (
           history.map((item, i) => (
-            <HistoryItem
-              key={i}
-              item={item}
-              index={i}
-              accent={accent}
-              onReuse={onReuse}
-              onDelete={handleDelete}
-            />
+            <HistoryItem key={i} item={item} index={i} accent={accent} onReuse={onReuse} onDelete={handleDelete} />
           ))
         )}
       </div>

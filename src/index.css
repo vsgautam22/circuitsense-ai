@@ -30,8 +30,18 @@ body {
 
 .history-scroll::-webkit-scrollbar,
 .examples-scroll::-webkit-scrollbar { width: 3px; }
+.history-scroll::-webkit-scrollbar-track,
+.examples-scroll::-webkit-scrollbar-track { background: transparent; }
 .history-scroll::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.35); border-radius: 2px; }
 .examples-scroll::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.35); border-radius: 2px; }
+.history-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0,255,136,0.6); }
+.examples-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0,255,136,0.6); }
+
+/* Also add generic panel scrollbar for dynamically colored panels */
+[style*="overflow-y: auto"]::-webkit-scrollbar { width: 3px; }
+[style*="overflow-y: auto"]::-webkit-scrollbar-track { background: transparent; }
+[style*="overflow-y: auto"]::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.3); border-radius: 2px; }
+[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover { background: rgba(0,255,136,0.55); }
 
 /* ── Selection ── */
 ::selection { background: rgba(0,255,136,0.2); color: #00ff88; }

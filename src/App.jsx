@@ -24,14 +24,22 @@ const TOOLS = [
 ]
 
 export default function App() {
-  const [activeTool, setActiveTool]       = useState(TOOLS[0])
-  const [apiKey, setApiKey]               = useState(() => localStorage.getItem('cs_apikey') || '')
-  const [inputText, setInputText]         = useState('')
+  const [activeTool, setActiveTool]           = useState(TOOLS[0])
+  const [apiKey, setApiKey]                   = useState(() => localStorage.getItem('cs_apikey') || '')
+  const [inputText, setInputText]             = useState('')
   const [newHistoryEntry, setNewHistoryEntry] = useState(null)
+  // Separate counters so SchematicPanel reacts to reuse/example clicks even if text is same
+  const [exampleTrigger, setExampleTrigger]   = useState(0)
 
   const handleApiKey = key => {
     setApiKey(key)
     localStorage.setItem('cs_apikey', key)
+  }
+
+  // Called by both ExamplesPanel and HistoryPanel
+  const handleExternalInput = (text) => {
+    setInputText(text)
+    setExampleTrigger(t => t + 1)   // signals SchematicPanel to pick up new text
   }
 
   const isSchematic = activeTool?.id === 'schematic'
@@ -41,7 +49,6 @@ export default function App() {
       <CircuitBackground />
 
       <div className="relative z-10 flex w-full h-full">
-        {/* Sidebar */}
         <Sidebar
           tools={TOOLS}
           activeTool={activeTool}
@@ -50,17 +57,17 @@ export default function App() {
           onApiKeyChange={handleApiKey}
         />
 
-        {/* Main content */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <TopBar activeTool={activeTool} apiKey={apiKey} />
 
           <div className="flex-1 flex overflow-hidden">
-            {/* Primary panel — SchematicPanel for schematic tool, ChatPanel for all others */}
             {isSchematic ? (
               <SchematicPanel
                 tool={activeTool}
                 apiKey={apiKey}
                 onNewHistoryEntry={setNewHistoryEntry}
+                externalInput={inputText}
+                externalTrigger={exampleTrigger}
               />
             ) : (
               <ChatPanel
@@ -72,40 +79,27 @@ export default function App() {
               />
             )}
 
-            {/* Right panel: History (top half) + Examples (bottom half) */}
+            {/* Right panel: History top half + Examples bottom half — fixed 280px, no internal toggle */}
             <div
-              className="flex flex-col flex-shrink-0"
+              className="flex flex-col flex-shrink-0 overflow-hidden"
               style={{
                 width: 280,
                 borderLeft: '1px solid rgba(255,255,255,0.05)',
                 background: 'rgba(6,10,14,0.88)',
                 backdropFilter: 'blur(12px)',
-                overflow: 'hidden',
               }}
             >
-              {/* History — top half */}
-              <div 
-                className="flex flex-col overflow-hidden" 
-                style={{ 
-                  height: '50%', 
-                  borderBottom: '1px solid rgba(255,255,255,0.05)' 
-                }}
-              >
+              <div className="flex flex-col overflow-hidden" style={{ height: '50%', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                 <HistoryPanel
                   tool={activeTool}
-                  onReuse={(prompt) => setInputText(prompt)}
+                  onReuse={handleExternalInput}
                   newEntry={newHistoryEntry}
                 />
               </div>
-
-              {/* Examples — bottom half */}
-              <div 
-                className="flex flex-col overflow-hidden" 
-                style={{ height: '50%' }}
-              >
+              <div className="flex flex-col overflow-hidden" style={{ height: '50%' }}>
                 <ExamplesPanel
                   tool={activeTool}
-                  onSelect={(text) => setInputText(text)}
+                  onSelect={handleExternalInput}
                 />
               </div>
             </div>
