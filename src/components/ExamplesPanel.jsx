@@ -202,7 +202,14 @@ export default function ExamplesPanel({ tool, onSelect }) {
           </div>
 
           {/* Example list */}
-          <div className="flex-1 overflow-y-auto thin-scroll p-3 space-y-2">
+          <div 
+            className="flex-1 p-3 space-y-2 examples-scroll"
+            style={{ 
+              overflowY: 'scroll',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(0,255,136,0.3) transparent'
+            }}
+          >
             {examples.length === 0 && !adding && (
               <div className="text-center py-8 space-y-2">
                 <p className="font-mono text-[10px] text-scope-muted">No examples yet.</p>

@@ -7,7 +7,7 @@ import ExamplesPanel from './components/ExamplesPanel.jsx'
 import HistoryPanel from './components/HistoryPanel.jsx'
 import CircuitBackground from './components/CircuitBackground.jsx'
 
-import { meta as schematicMeta, systemPrompt as schematicSP } from './tools/schematicGen.js'
+import { meta as schematicMeta, systemPrompt as schematicSP, hdlSystemPrompt as schematicHDL } from './tools/schematicGen.js'
 import { meta as protocolMeta,  systemPrompt as protocolSP  } from './tools/protocolAnalyzer.js'
 import { meta as rtlMeta,       systemPrompt as rtlSP       } from './tools/rtlAssistant.js'
 import { meta as timingMeta,    systemPrompt as timingSP    } from './tools/timingAdvisor.js'
@@ -15,7 +15,7 @@ import { meta as faultMeta,     systemPrompt as faultSP     } from './tools/faul
 import { meta as componentMeta, systemPrompt as componentSP } from './tools/componentSelector.js'
 
 const TOOLS = [
-  { ...schematicMeta, systemPrompt: schematicSP },
+  { ...schematicMeta, systemPrompt: schematicSP, hdlSystemPrompt: schematicHDL },
   { ...protocolMeta,  systemPrompt: protocolSP  },
   { ...rtlMeta,       systemPrompt: rtlSP       },
   { ...timingMeta,    systemPrompt: timingSP     },
@@ -84,13 +84,11 @@ export default function App() {
               }}
             >
               {/* History — top half */}
-              <div
-                className="flex flex-col"
-                style={{
-                  flex: '1 1 50%',
-                  borderBottom: '1px solid rgba(255,255,255,0.05)',
-                  minHeight: 0,
-                  overflow: 'hidden',
+              <div 
+                className="flex flex-col overflow-hidden" 
+                style={{ 
+                  height: '50%', 
+                  borderBottom: '1px solid rgba(255,255,255,0.05)' 
                 }}
               >
                 <HistoryPanel
@@ -101,13 +99,9 @@ export default function App() {
               </div>
 
               {/* Examples — bottom half */}
-              <div
-                className="flex flex-col"
-                style={{
-                  flex: '1 1 50%',
-                  minHeight: 0,
-                  overflow: 'hidden',
-                }}
+              <div 
+                className="flex flex-col overflow-hidden" 
+                style={{ height: '50%' }}
               >
                 <ExamplesPanel
                   tool={activeTool}

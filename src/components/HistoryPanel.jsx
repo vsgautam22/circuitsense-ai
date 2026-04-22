@@ -144,7 +144,14 @@ export default function HistoryPanel({ tool, onReuse, newEntry }) {
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto thin-scroll p-2.5 space-y-1.5">
+      <div 
+        className="flex-1 p-2.5 space-y-1.5 history-scroll"
+        style={{ 
+          overflowY: 'scroll',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0,255,136,0.3) transparent'
+        }}
+      >
         {history.length === 0 ? (
           <div className="text-center py-6">
             <History size={16} className="mx-auto mb-2 opacity-20" style={{ color: accent }} />
