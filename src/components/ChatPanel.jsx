@@ -164,7 +164,26 @@ export default function ChatPanel({ tool, apiKey, inputText, onInputChange, onNe
   const isSchematic = tool?.id === 'schematic'
 
   useEffect(() => { setHistory([]); onInputChange(''); setHdlCode(''); setInputMode('prompt') }, [tool?.id])
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [history, loading])
+  // Ref to track the last AI message element for scroll-to-top behavior
+  const lastAiMsgRef = useRef(null)
+
+  useEffect(() => {
+    if (loading) {
+      // While loading, keep bottom visible so spinner is seen
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+    // After response arrives, scroll to show the START of the new message
+    requestAnimationFrame(() => {
+      if (lastAiMsgRef.current) {
+        const container = lastAiMsgRef.current.closest('.message-scroll')
+        if (container) {
+          const msgTop = lastAiMsgRef.current.offsetTop
+          container.scrollTo({ top: Math.max(0, msgTop - 16), behavior: 'smooth' })
+        }
+      }
+    })
+  }, [history, loading])
 
   const send = async () => {
     const activeInput = inputMode === 'hdl' ? hdlCode : inputText
@@ -223,7 +242,11 @@ export default function ChatPanel({ tool, apiKey, inputText, onInputChange, onNe
         {history.length === 0 && <EmptyState tool={tool} inputMode={inputMode} />}
 
         {history.map((msg, i) => (
-          <div key={i} className={`flex gap-3 slide-up ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+          <div
+            key={i}
+            ref={i === history.length - 1 && msg.role === 'assistant' ? lastAiMsgRef : null}
+            className={`flex gap-3 slide-up ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+          >
             <div
               className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0 mt-0.5 font-mono text-[9px]"
               style={{

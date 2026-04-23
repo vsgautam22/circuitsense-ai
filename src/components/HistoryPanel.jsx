@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { History, Trash2, RotateCcw, Clock } from 'lucide-react'
+import { History, Trash2, RotateCcw, Clock, PanelRightClose, PanelRightOpen } from 'lucide-react'
 
 const MAX_HISTORY = 50
 const STORAGE_KEY = (toolId) => `cs_history_${toolId}`
@@ -49,7 +49,7 @@ function HistoryItem({ item, index, accent, onReuse, onDelete }) {
             onClick={() => onReuse(item.prompt)}
             className="w-5 h-5 rounded flex items-center justify-center"
             style={{ background: `${accent}15`, color: accent }}
-            title="Reuse"
+            title="Reuse prompt"
           >
             <RotateCcw size={8} />
           </button>
@@ -74,7 +74,7 @@ function HistoryItem({ item, index, accent, onReuse, onDelete }) {
   )
 }
 
-export default function HistoryPanel({ tool, onReuse, newEntry }) {
+export default function HistoryPanel({ tool, onReuse, newEntry, onTogglePanel, panelOpen }) {
   const [history, setHistory] = useState([])
   const [showClearConfirm, setShowClearConfirm] = useState(false)
 
@@ -105,9 +105,9 @@ export default function HistoryPanel({ tool, onReuse, newEntry }) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Header */}
+      {/* Header — contains collapse toggle */}
       <div
-        className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
+        className="flex items-center justify-between px-3 py-2 flex-shrink-0"
         style={{ borderBottom: `1px solid ${accent}15`, background: `${accent}05` }}
       >
         <div className="flex items-center gap-2">
@@ -120,20 +120,36 @@ export default function HistoryPanel({ tool, onReuse, newEntry }) {
             {history.length}
           </span>
         </div>
-        {history.length > 0 && (
-          showClearConfirm ? (
-            <div className="flex items-center gap-1.5">
-              <span className="font-mono text-[8px] text-scope-muted">Clear all?</span>
-              <button onClick={handleClearAll} className="font-mono text-[8px] text-scope-red">Yes</button>
-              <button onClick={() => setShowClearConfirm(false)} className="font-mono text-[8px] text-scope-dim ml-1">No</button>
-            </div>
-          ) : (
+
+        <div className="flex items-center gap-2">
+          {/* Clear button */}
+          {history.length > 0 && !showClearConfirm && (
             <button onClick={() => setShowClearConfirm(true)}
               className="font-mono text-[9px] text-scope-muted hover:text-scope-red transition-colors">
               clear
             </button>
-          )
-        )}
+          )}
+          {showClearConfirm && (
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono text-[8px] text-scope-muted">Sure?</span>
+              <button onClick={handleClearAll} className="font-mono text-[8px] text-scope-red">Yes</button>
+              <button onClick={() => setShowClearConfirm(false)} className="font-mono text-[8px] text-scope-dim ml-1">No</button>
+            </div>
+          )}
+          {/* Panel collapse toggle — top right of history header */}
+          <button
+            onClick={onTogglePanel}
+            className="w-6 h-6 rounded flex items-center justify-center transition-all"
+            style={{
+              background: `${accent}10`,
+              border: `1px solid ${accent}25`,
+              color: accent,
+            }}
+            title={panelOpen ? 'Collapse panel' : 'Expand panel'}
+          >
+            <PanelRightClose size={11} />
+          </button>
+        </div>
       </div>
 
       {/* Scrollable list */}
